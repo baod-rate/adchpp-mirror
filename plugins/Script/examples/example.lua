@@ -2,13 +2,13 @@
 -- documents the bare minimum needed to make an Lua script interface with ADCH++.
 
 -- For more detailed information, peeking into other, more evolved (but less documented) example
--- scripts as well as the Doxygen documentation of ADCH++ <http://adchpp.sourceforge.net/doc> would
+-- scripts as well as the Doxygen documentation of ADCH++ <https://adchpp.sourceforge.io/doc> would
 -- be a good idea.
 
 -- Generally, to reach member "bar" of the class "foo" of ADCH++, one has to use: adchpp.foo_bar.
 -- Examples: adchpp.Util_getCfgPath(), adchpp.AdcCommand_CMD_MSG, adchpp.Entity_STATE_NORMAL...
 
--- Feel free to use <https://answers.launchpad.net/adchpp> or <www.adcportal.com> if you need help.
+-- Feel free to use <https://answers.launchpad.net/adchpp> if you need help.
 
 -- When multiple scripts are loaded within the same global Lua engine, they can access each other's
 -- public exports. It is therefore a convention to run each script in its own module.

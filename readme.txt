@@ -3,7 +3,7 @@
 == Introduction
 
 ADCH++ is a hub for the ADC network. It implements the
-http://dcplusplus.sf.net/ADC.html[ADC protocol]. The core application is very
+https://adc.sourceforge.io/ADC.html[ADC protocol]. The core application is very
 simple, but extensible using plugins. Among the standard plugins there is a
 scripting plugin that allows hub owners to further customize the hub using 
 several scripting languages.
@@ -24,10 +24,10 @@ in the https://sourceforge.net/p/adchpp/code[Mercurial] repository.
 
 ADCH++ documentation is divided to two parts:
 . Basic guide: a setup guide for beginners who want to get started using ADCH++,
-available at http://adchpp.sourceforge.net/user_guide/basic_guide.html
+available at https://adchpp.sourceforge.io/user_guide/basic_guide.html
 . Expert guide: for advanced/expert users who interested in scripting, compiling
 or contributing to ADCH++, available at
-http://adchpp.sourceforge.net/user_guide/expert_guide.html
+https://adchpp.sourceforge.io/user_guide/expert_guide.html
 
 The latest revision of these documentation is available under the "docs" 
 folder in the ADCH++ release packages as well as in the ADCH++ repository at

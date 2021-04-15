@@ -2,7 +2,7 @@
 -- The final goal of this script is to base its several kind of rate rules on a "severeness" factor meaning it takes into account what the context of the commands are and the size of the strings they will produce.
 -- The intention was to make a "hubs and users friendly" anti flood and guard system, so if one spams by "accident" he will receive warnings only first, and if the user stops his bad actions, he can, after a few seconds, use the command again like any other user. On the other side the script should prevent hammering of users that do not comply to the rules.
 
--- Read the Expert Guide in the Docs folder for basic usage information. For in-depth explanation of the impementation follow http://bazaar.launchpad.net/~dcplusplus-team/adchpp/trunk/view/head:/docs/user_guide/guard_guide.rtf it will give you a nice idea of what is possible and what not...
+-- Read the Expert Guide in the Docs folder for basic usage information. For in-depth explanation of the impementation follow https://sourceforge.net/p/adchpp/code/ci/default/tree/docs/user_guide/guard_guide.rtf it will give you a nice idea of what is possible and what not...
 
 
 local base = _G

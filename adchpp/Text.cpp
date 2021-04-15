@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001-2018 Jacek Sieka, arnetheduck on gmail point com
+ * Copyright (C) 2001-2021 Jacek Sieka, arnetheduck on gmail point com
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,7 +69,7 @@ void Text::wcToUtf8(wchar_t c, string& str) {
 	// https://tools.ietf.org/html/rfc3629#section-3
 	if(c > 0x10ffff || (c >= 0xd800 && c <= 0xdfff)) {
 		// Invalid UTF-8 code point
-		// REPLACEMENT CHARACTER: http://www.fileformat.info/info/unicode/char/0fffd/index.htm
+		// REPLACEMENT CHARACTER: https://www.fileformat.info/info/unicode/char/0fffd/index.htm
 		wcToUtf8(0xfffd, str);
 	} else if(c >= 0x10000) {
 		str += (char)(0x80 | 0x40 | 0x20 | 0x10 | (c >> 18));

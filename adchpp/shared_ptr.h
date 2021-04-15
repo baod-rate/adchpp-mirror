@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2018 Jacek Sieka, arnetheduck on gmail point com
+ * Copyright (C) 2006-2021 Jacek Sieka, arnetheduck on gmail point com
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 #ifdef __MINGW32__
 
 /* the shared_ptr implementation provided by MinGW / GCC 4.5's libstdc++ consumes too many
-semaphores, so we prefer boost's one. see <http://gcc.gnu.org/bugzilla/show_bug.cgi?id=46455>. */
+semaphores, so we prefer boost's one. see <https://gcc.gnu.org/bugzilla/show_bug.cgi?id=46455>. */
 
 // enabling this on newer GCC versions as well as handle leaks still appear when running scripts.
 /// @todo hopefully remove this someday...

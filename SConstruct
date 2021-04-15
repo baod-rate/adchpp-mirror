@@ -12,6 +12,7 @@ gcc_flags = {
 		'-Wno-missing-field-initializers', '-Wno-address',
 		'-Wno-unknown-pragmas',
 		'-Wno-deprecated-declarations',  # TODO re-eval on boost updates
+		'-Wno-deprecated',               # C++11 deprecates dynamic exception specifications
 		'-fexceptions',
 	],
 	'debug': [], 
@@ -71,7 +72,9 @@ msvc_defs = {
 
 gcc_defs = {
 	# _BSD_SOURCE is for some int types in LuaSocket on Linux.
-	'common' : ['_REENTRANT', '_BSD_SOURCE'],
+	# _DEFAULT_SOURCE:
+	# https://sourceware.org/glibc/wiki/Release/2.20#Deprecation_of__BSD_SOURCE_and__SVID_SOURCE_feature_macros
+	'common' : ['_REENTRANT', '_BSD_SOURCE', '_DEFAULT_SOURCE'],
 	'debug' : ['_DEBUG'],
 	'release' : ['NDEBUG']
 }
