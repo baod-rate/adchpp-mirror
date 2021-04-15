@@ -1,4 +1,5 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -Eeuo pipefail
 
 # Update the copyright year of all ADCH++ files.
 
@@ -20,7 +21,7 @@ if [[ -z $NEW_YEAR ]]; then
 	exit 1
 fi
 
-echo Replacing from $OLD_YEAR to $NEW_YEAR...
+echo Replacing from "$OLD_YEAR" to "$NEW_YEAR"...
 
 find ../License.txt ../adchpp ../adchppd ../docs ../plugins/Bloom/src ../plugins/Script/src \
 	-type f \( -name "License.txt" -o -name "*.h" -o -name "*.cpp" -o -name "*.txt" -o -name "*.py" -o -name "*.rc" \) \
