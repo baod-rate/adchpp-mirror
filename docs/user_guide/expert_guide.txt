@@ -1,8 +1,8 @@
 = ADCH++  Expert User Guide
 Created by the DC++ team
-Document Version 0.4.6
+Document Version 0.4.7
 :toc:
-This version of the guide corresponds with ADCH++ versions *2.9.x* and later.
+This version of the guide corresponds with ADCH++ versions *3.0.0* and later.
 
 == Introduction
 
@@ -14,13 +14,71 @@ The core is also exposed as a Python and a Ruby module, thus it is possible to u
 
 This guide is intended for novice or expert users. It focuses on various scripting interfaces, advanced hub security, compiling and running ADCH++ in service mode, as well as troubleshooting and bug reporting.
 
+== Scaling the hub's resource usage to avoid connectivity issues
+
+ADCH++ comes with reasonable defaults regarding the low level connectivity parameters which are sufficient for running the hub in most cases. However, there can be certain situations where those settings should be modified for optimal operation of the hub software.
+Cases include, but not limited to, when the hub becomes laggy (less responsive) with large usercount, users getting dropped or unable to login when the hub is (re)started.
+
+Some of the low level connectivity parameters can be altered in the <Settings> node of the adchpp.xml configuration file. In the default packaged file all the settings are provided with self-explanatory comments. Read these comments carefully to understand the effect of the various configurable parameters.
+
+Most times increasing buffer sizes (<BufferSize>, <MaxBufferSize> parameters) should solve connectivity issues but then the hub will allocate more memory per user so be careful not to get too extensive memory usage. The default buffer size values should be fine up to at least 500 hub users in a normal setup, however, the quality of the hub connection and increased per user traffic (e.g. large user commands, etc...) may require a fine tuning of these parameters in case of such or even lower usercount to avoid issues.
+
+The hub may refuse new users to login when and until serving of certain percent of total logged in users whose connection is stalling (their socket buffer has overflown). This can reportedly be a problem in case of low quality hub connections, especially when large amount of users connecting to the hub in a short timeframe, for example, when you (re)start the hub. Increasing socket buffer sizes can fix this particular issue as well but then the increased amount of allocated memory may remain unused throughout the session. For that reason the maxumim percentage of users allowed stalling is also configurable. This way the hub can be set to be more graceful to the connecting users while causing only intermittent higher resource usage periods. If you experience the problem above you should try to find the best percentage value that is fixing the issue but not endangering the stability of the hub. You can also combine this with slight buffer size increases as feasible to get the optimal bargain. Since the hub can be less responsive when you increasing the allowed buffer overflown users parameter (<AllowOverflow>), you may need to increase both the login (<LogTimeout>) and the owerflow (<OverflowTimeout>) timeout parameters as well. 
+
+Beware that large changes to the default values or specifying incorrect settings can easily render your hub unusable. Experiment with relatively small changes, change to only 1,5 or 2 times higher of the previous value at a time, to be able to fix the problem but remain as light as possible with the hub's resource usage. 
+
+You always need to restart the hub for changes in these parameters to take effect. It is also advised to make a backup of the settings file before start experimenting.
+
+CAUTION: Editing the values incorrectly can lead to problems so be careful what you're doing. If the settings file doesn't met the XML standards it may won't be processed correctly. If you encounter errors try to validate the settings file syntax with an XML validator such as https://www.xmlvalidation.com 
+ 
 == Advanced hub security
+
+=== Secure the hub connectivity with keyprint
+
+Connection to hubs can be unsafe in many ways and hardening the security as much as possible without sacrificing usability is always an advantage. The most common way of attack is, for example, to take the ownership of the hub address domain and divert the connected clients elsewhere.
+Keyprint adds a simple, but secure, way to protect against man-in-the-middle attacks, ensures that clients are always connecting to the hub they desire and not to some other maliciously set up DC hub. It is also an easier-to-use replacement of trusted certificates.
+
+The keyprint itself is a BASE32 encoded value of the SHA256 hash of the server certificate file cacert.pem. 
+You need a hash generator tool to get the hash of the cert file. There are plenty out there and some may even come with your operating system. The OpenSSL binary is also capable of producing the hash value by using the command
+
+.Example: Getting the hash of the cert file using OpenSSL
+--------------------------------------
+openssl.exe x509 -noout -fingerprint -sha256 < cacert.pem
+--------------------------------------
+
+It will output the hash in following hexadecimal format: 
+
+.Example: Output when getting the hash value using OpenSSL
+--------------------------------------
+SHA256 Fingerprint=26:A6:A3:6F:9A:3C:A1:BA:87:E9:F2:35:FA:2C:B3:6D:6B:28:C8:8A:22:58:E5:9D:04:8E:6C:1E:AE:BE:83:55
+--------------------------------------
+
+You need to BASE32 encode the resulting hexadecimal value to get the keyprint. There are also plenty of online converting tools out there for this conversion, for example, https://tomeko.net/online_tools/hex_to_base32.php?lang=en[this one]. The conversion will result an encoded string similar to the following:
+
+.Example: BASE32 encoded hash value
+--------------------------------------
+E2TKG342HSQ3VB7J6I27ULFTNVVSRSEKEJMOLHIERZWB5LV6QNKQ
+--------------------------------------
+
+Once you've created your hub's keyprint you can publish it as a part of your hub address URL. The keyprint parameter consists of a hash name, followed by a forward slash (/), followed by the generated keyprint.
+
+.Example: Hub URL with keyprint parameter
+--------------------------------------
+adcs://example.com:1234/?kp=SHA256/E2TKG342HSQ3VB7J6I27ULFTNVVSRSEKEJMOLHIERZWB5LV6QNKQ
+--------------------------------------
+
+When DC clients that support keyprint (most which supports the latest version of the ADC protocol should do) trying to connect to your hub using an address with the keyprint parameter specified, they will now compare the hash value what your hub sends to the public keyprint and refuse to connect if they mismatch.
+
+The only caveat of using keyprint is that it obviously needs to be recreated once your certificate becomes invalid. Since keyprint is part of the hub URL that clients may save as favorites, a certificate change may prevent some users connecting to the hub until they change or remove the old keyprint from the saved hub address.
+To avoid this you can generate a new certificate before you publish the keyprint that is valid for several years. The basic ADCS setup part of the Basic Guide describes how to change the validity time of the generated cerificate.
+
+=== Monitor and control user behavior with guard functions
 
 This part shows how to achieve spam, badword or badsearch protection as well as how to protect the hub's normal operation from malicious or accidental flooding or misuse.
 
-IMPORTANT: The prepackaged Lua scripts should be properly loaded to get the functionality described in this chapter.
+IMPORTANT: The prepackaged Lua scripts should be properly loaded to get the functionality described in the remaining parts of this chapter.
 
-=== Automatic spam, badword and badsearch protection: working with the banre commands
+==== Automatic spam, badword and badsearch protection: working with the banre commands
 
 +banxxxre commands are very powerful tools for getting rid of unwanted text showing in mainchat or private message as well as for blocking searches containing keywords which treated malicious. These commands use Lua pattern matching method which is similar to the popular regular expressions. Usage of the commands to detect the unwanted content requires knowledge of how to construct a regular expression like filter.
 
@@ -46,7 +104,7 @@ IMPORTANT: Removing a banre rule does NOT automatically remove the already (temp
 +banmsgre 100 <www> unwanted spam
 --------------------------------------
 
-=== Setting up limits rules
+==== Setting up limits rules
 
 Using basic rules you can specify a few parameters the hub members should meet to use your hub. These rules provided by the clients with their periodic info data.
 
@@ -132,7 +190,7 @@ To see all the current limits rules settings values in a grouped table format us
 --------------------------------------
 command.
 
-=== Flood protection
+==== Flood protection
 
 The access.guard.lua script provides an advanced flood protection for your hub. The function is globally disabled by default but the various settings are filled with optimal parameters to start with. If you want to fine tune the flood protection you can do so as every parameter is highly configurable. 
 
@@ -190,7 +248,7 @@ You can configure how long do you want to keep the log of the kick and tempban e
 --------------------------------------
 setting where n is the log expire time in days for both logs.
 
-=== Tracing users
+==== Tracing users
 
 Above the basic current information the core provides about an online user (+info <nick/CID> command) it's possible to keep track of registered and unregistered users' activity in the hub for a given period of time (last n days). You can identify users logging on with different clients, using different nicks or arriving from various IP addresses.
 
@@ -245,7 +303,7 @@ You can get the trace information for any stored entity (user) by one of its thr
 
 TIP: Settings values and logs are kept even if you globally disable the entity tracing function.
 
-=== Displaying extended hub statistics
+==== Displaying extended hub statistics
 
 If the acces.guard script is running it's possible to obtain highly detailed statistics about the ADC commands used in the hub. This is an useful addition to the basic information the hub core provides with the +info command. 
 To see the extended hub commands usage statistics use the
@@ -586,9 +644,9 @@ MinGW packages by the MinGW-w64 project are preferred:
 === Building ADCH++
 To build ADCH++ from source you have to:
 
-* Install SWIG and ensure it's in your PATH
-* Install Python and ensure it's in your PATH
-* Install SCons and ensure it's in your PATH
+* Install SWIG and ensure it's in your PATH.
+* Install Python and ensure it's in your PATH. Both version 2.x and 3.x should work.
+* Install SCons and ensure it's in your PATH. You need version 2.5.0 for Python 2.x, the latest version for Python 3.x.
 * Windows with MinGW: Install MinGW and ensure it's in your PATH
 * Linux: Install GCC and appropriate header files, in particular, these packages spring to mind:
 	** gcc-c++
@@ -651,5 +709,6 @@ Changelog:
 0.4.4: Update build tools (poy)
 0.4.5: Update supported OSes; httpsify feasible links; fix broken links; change links from BZR to the Mercurial repository (emtee)
 0.4.6: Httpsify feasible links (emtee)
+0.4.7: Add info about scaling hub resource usage with low level connectivity settings; Add info about keyprint generation; (emtee)
 ////////////////////////////////////////////////////////////////
 // vim: set syntax=asciidoc:

@@ -1,6 +1,6 @@
 = ADCH++ Basic User Guide
 Created by the DC++ team
-Document Version 0.3.12
+Document Version 0.3.13
 :toc:
 This version of the guide corresponds with ADCH++ versions *3.0.0* and later.
 
@@ -54,8 +54,11 @@ CAUTION: on Windows you should install ADCH\++ to the Program files / Program fi
 As the last step of the installation procedure you'll be asked if you want to install ADCH\++ as a service or not. The main difference between installing ADCH\++ as an applciation or as a service is that in application mode the ADCH\++ console window will be always visible. This can be an advantage as you always able to ensure the hub is there, up and running and you can easily stop the hub anytime. On the contrary, as the console window cannot be closed (only minimized) it will always reside on your taskbar which can be annoying for some users. If ADCH\++ is running in service mode then you won't see any opened console window and outputs will go to the log file only. In this mode you can start and stop the hub in the Windows Service Management Console or using the appropriate shell commands. You can find more detailed information about running ADCH++ in service mode in the https://adchpp.sourceforge.io/user_guide/expert_guide.html[Expert User Guide].
 
 === Installing on Linux
+
+IMPORTANT: This part may be outdated and needs to be updated. Patches welcome from those who've successfully done compiling and installing ADCH++ recently on various modern Linux distributions.
+
 Installing on Linux/Unix operating systems requires the source code for ADCH++ since we don't provide any prepackaged binaries for Unix/Linux distributions.
-The source code is available via Sourceforge (official releases) or from our Bazaar repository at Launchpad.
+The source code is available via Sourceforge downloads (official releases) or from our Mercurial repository (current development).
 
 Source code download: https://sourceforge.net/projects/adchpp/files/
 
@@ -100,6 +103,8 @@ cp -rf etc/ build/release-default/bin/config
 . Copy files to bin folder.
 . Start ADCH++.
 
+TIP: You find instructions on how to build ADCH++ on Ubuntu https://forum.dchublist.org/viewtopic.php?f=29&t=480[here].
+
 == Setting up your hub
 
 This part focuses to the basic configuration of the hub describing how to manage and setup ADCH++ for operational use.
@@ -136,13 +141,15 @@ Add a new <Server/> entry to adchpp.xml with the port you wish your hub to liste
 ---------------------------------------------------------------------
 In this example you will use the address adc://yourdomain:2113 in your DC client to log on to your hub.
 
-To be able to connect to your hub in a secure encrypted way (ADCS connections), set TLS="1" and specify the following path's: Certificate, PrivateKey, TrustedPath, DHParams.
+==== Setting up a secure ADCS connection
+
+To be able to connect to your hub in a secure encrypted way (ADCS connections), in the Server Port entry set TLS="1" and specify the following paths for certificate files: Certificate, PrivateKey, TrustedPath, DHParams.
 
 IMPORTANT: Linux users should always use _absolute_ path's in this setting.
 
-An example of an encrypted server setting:
+An example of a Server setting for encrypted connections:
 
-.Example: insert this to the Server line in adchpp.xml:
+.Example: insert this to the Server enrty in adchpp.xml:
 ---------------------------------------------------------------------
 [source,xml]
 	<Servers>
@@ -152,7 +159,7 @@ An example of an encrypted server setting:
 ---------------------------------------------------------------------
 In this example you will use the address adcs://yourdomain:2780 in your DC client to log on to your hub.
 
-To make the SSL encrypted connectivity possible you must generate three security certificate (.pem) files for your hub (see the example above). You need to install OpenSSL to generate your cert files. The .pem files must be located in their path specified in the <Server ...> settings to be able to make ADCS connections to the hub.
+To make the secure encrypted TLS connectivity possible to your hub you must generate the three security certificate (.pem) files shown in the example above. You will need to install OpenSSL to generate these cert files. All the .pem files must be present in their specified paths in the <Server ...> entry of the XML settings file to be able to make ADCS connections to the hub.
 
 .How to get OpenSSL (needed for certificate generation)
 [width="100%",options="header"]
@@ -163,11 +170,11 @@ To make the SSL encrypted connectivity possible you must generate three security
 | Redhat	 		| yum install openssl
 |==============================================
 
-To automatically generate files and place them to the deafult path you can use the certificate files generator script (generate_certs.cmd/sh) provided in the ADCH\++ release package. Alternatively you can download the script corresponding to your operating system (https://sourceforge.net/p/adchpp/code/ci/tip/tree/windows/Generate_certs.cmd[Windows] or https://sourceforge.net/p/adchpp/code/ci/tip/tree/linux/generate_certs.sh[Linux]) from the ADCH++ code repository as well.
+To automatically generate files and place them to the deafult path you can use the certificate files generator script (generate_certs.cmd or .sh depending on your OS) provided in the ADCH\++ release package. Alternatively you can download the script for your operating system (https://sourceforge.net/p/adchpp/code/ci/tip/tree/windows/Generate_certs.cmd[Windows] or https://sourceforge.net/p/adchpp/code/ci/tip/tree/linux/generate_certs.sh[Linux]) from the ADCH++ code repository as well.
 
 The script will create and automatically place the generated certificate files to a folder named 'certs' under the ADCH++ program folder.
 
-IMPORTANT: If you run the certificate files generator script under Windows it is recommended to install OpenSSL to its default folder and run the script in elevated mode (as Administrator).
+IMPORTANT: If you run the certificate files generator script under Windows it is recommended to install OpenSSL to its default folder. You may need to run the script in elevated mode (as Administrator).
 
 Alternatively you can generate the .pem files manually using the following commands:
 
@@ -178,6 +185,8 @@ openssl genrsa -out privkey.pem 2048
 openssl req -new -x509 -key privkey.pem -out cacert.pem -days 1095
 openssl dhparam -outform PEM -out dhparam.pem 2048
 ---------------------------------------------------------------------
+
+TIP: The above commands will generate a certificate that is valid for 3 years (1095 days). If you want longer validity period you can change the value of the -days switch (in the second command line of the above example) as desired. Note that generating certificate with much more years of validity is not recommended if you want reasonable security. 
 
 TIP: Remember if you have specified TLS=1 in the server configuration, all users must connect to your hub using the prefix adcs:// added to the hub address (adcs://yourdomain:port). You can open more than one ports for your hub by adding more <Server/> entries. You can even mix secure and unsecure (non-TLS) port connections by adding TLS=1 parameter to a particular <Server/> entry only.
 
@@ -467,6 +476,12 @@ You simply re-register the user with the new password and user level. You must s
 +regnick <user> <password> <new level>
 --------------------------------------
 
+==== Why are different registered accounts unable to log in to the hub with the same DC client?
+
+Unlike the former Direct Connect protocol NMDC, which identifies users by their nicks, https://adc.sourceforge.io/ADC.html[ADC protocol] identifies hub users by their DC clients using a client assigned ID https://adc.sourceforge.io/ADC.html#_client_id[(CID)].
+The user authentication in ADCH\++ works in the similar manner; once users registered by their nick log in for the first time, their CID is registered and subsequent logins will use the CID + password combination to authenticate the users.
+By default this allows multiple users with the same nick to log in but will prevent multiple accounts to log in with the same DC client. Therefore currently it is not possible for a user with one DC client to have multiple accounts on an ADCH++ hub. This means that for a real world example an administrator cannot check whether users are able to log in with their accounts, etc... with their DC client used for the hub administration. A workaround for these cases is to use multiple DC clients for multiple user accounts.
+
 == More information
 
 If you want to know more about ADCH++
@@ -509,5 +524,6 @@ Changelog:
 0.3.10: Update certification generation info (emtee)
 0.3.11: Document +cfg minmainchatlevel (poy)
 0.3.12: Httpsify feasible links (emtee)
+0.3.13: Clean up instructions for basic ADCS connectivity setup; add FAQ about user authentication method
 ////////////////////////////////////////////////////////////////
 // vim: set syntax=asciidoc:

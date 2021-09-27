@@ -32,6 +32,8 @@
 		<MaxSendSize type="int">1400</MaxSendSize>
 		-->
 
+		<!-- Maximum size of an incoming ADC command. Receving a larger command than this results 
+			 the client getting disconnected. 0 = disable the check. -->
 		<MaxCommandSize type="int">16384</MaxCommandSize>
 
 		<!-- Buffer size, this is the minimum buffer size that is initially assigned to
