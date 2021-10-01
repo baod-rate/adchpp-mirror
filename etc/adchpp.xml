@@ -47,12 +47,21 @@
 			 becomes larger than MaxRecvSize (outgoing buffer overflow). -->
 		<OverflowTimeout type="int">60000</OverflowTimeout>
 
+		<!-- Percentage of the total usercount allowed to have overflowing buffers 
+			 before new user logins are refused by the hub with 'not enough bandwidth'
+			 error message. Small percentages defend the hub getting out of bandwith and
+			 increase the chance of refusing new users while large values are more graceful
+			 to the connecting users but increasingly endangering the hub stability.
+			 Note that this setting is ignored as long as the total number of users with
+			 overflowing buffers is less than 4. -->
+		<OverflowLimit type="unsignedByte">25</OverflowLimit>
+
 		<!-- Timeout (ms) before ADCH++ stops trying to empty its send buffer for a user
 			 (to send a kick message for example), and disconnects him/her. -->
-		<DisconnectTimeout>10000</DisconnectTimeout>
+		<DisconnectTimeout type="int">10000</DisconnectTimeout>
 
 		<!-- Timeout (ms) before disconnecting users whose login process is taking too long. -->
-		<LogTimeout>10000</LogTimeout>
+		<LogTimeout type="int">10000</LogTimeout>
 	</Settings>
 
 	<Servers>

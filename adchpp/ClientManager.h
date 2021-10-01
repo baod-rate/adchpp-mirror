@@ -172,6 +172,9 @@ public:
 	void setLogTimeout(size_t millis) { logTimeout = millis; }
 	size_t getLogTimeout() const { return logTimeout; }
 
+	void setOverflowLimit(uint8_t percent) { overflowLimit = percent; }
+	uint8_t getOverflowLimit() const { return overflowLimit; }
+
 	Core &getCore() const { return core; }
 private:
 	friend class Core;
@@ -193,6 +196,7 @@ private:
 
 	size_t maxCommandSize;
 	size_t logTimeout;
+	uint8_t overflowLimit;
 
 	// Temporary string to use whenever a temporary string is needed (to avoid (de)allocating memory all the time...)
 	std::string strtmp;

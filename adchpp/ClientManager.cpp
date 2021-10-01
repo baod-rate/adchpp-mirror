@@ -43,7 +43,8 @@ ClientManager::ClientManager(Core &core) throw() :
 core(core),
 hub(*this),
 maxCommandSize(16 * 1024),
-logTimeout(30 * 1000)
+logTimeout(30 * 1000),
+overflowLimit(25)
 {
 	hub.addSupports(AdcCommand::toFourCC("BASE"));
 	hub.addSupports(AdcCommand::toFourCC("TIGR"));
@@ -306,7 +307,7 @@ bool ClientManager::verifyOverflow(Entity& c) {
 		}
 	}
 
-	if(overflowing > 3 && overflowing > (entities.size() / 4)) {
+	if(overflowing > 3 && overflowing > (entities.size() * (float(getOverflowLimit()) / 100))) {
 		disconnect(c, Util::REASON_NO_BANDWIDTH, "Not enough bandwidth available, please try again later", AdcCommand::ERROR_HUB_FULL);
 		return false;
 	}
