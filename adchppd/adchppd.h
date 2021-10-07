@@ -19,3 +19,4 @@
 #include <adchpp/Core.h>
 
 void loadXML(adchpp::Core &core, const std::string& fileName);
+uint16_t getProtoVersion(uint8_t setting);

@@ -94,15 +94,15 @@ public:
 		if(bufs.size() == 1) {
 			sock.async_write_some(buffer(bufs[0]->data(), bufs[0]->size()), handler);
 		} else {
-			size_t n = std::min(bufs.size(), static_cast<size_t>(64));
+			auto n = std::min(bufs.size(), static_cast<size_t>(64));
 			std::vector<const_buffer> buffers;
 			buffers.reserve(n);
 
 			const size_t maxBytes = 1024;
 
 			for(size_t i = 0, total = 0; i < n && total < maxBytes; ++i) {
-				size_t left = maxBytes - total;
-				size_t bytes = min(bufs[i]->size(), left);
+				auto left = maxBytes - total;
+				auto bytes = min(bufs[i]->size(), left);
 				buffers.push_back(const_buffer(bufs[i]->data(), bytes));
 				total += bytes;
 			}
@@ -218,6 +218,11 @@ public:
 		    context->use_certificate_chain_file(info.TLSParams.cert);
 		    context->use_private_key_file(info.TLSParams.pkey, ssl::context::pem);
 		    context->use_tmp_dh_file(info.TLSParams.dh);
+		    SSL_CTX_set_min_proto_version(context->native_handle(), info.TLSParams.minVersion);
+		    if (info.TLSParams.cipherSuites13 != Util::emptyString) {
+			    SSL_CTX_set_ciphersuites(context->native_handle(), info.TLSParams.cipherSuites13.c_str());
+		    }
+		    SSL_CTX_set_security_level(context->native_handle(), info.TLSParams.securityLevel);
 		}
 #endif
 	}
@@ -285,7 +290,7 @@ int SocketManager::run() {
 				tcp::resolver::query::address_configured | tcp::resolver::query::passive));
 
 			for(auto i = local; i != tcp::resolver::iterator(); ++i) {
-				SocketFactoryPtr factory = make_shared<SocketFactory>(*this, incomingHandler, *si, *i);
+				auto factory = make_shared<SocketFactory>(*this, incomingHandler, *si, *i);
 				factory->prepareAccept();
 				factories.push_back(factory);
 			}
@@ -333,8 +338,8 @@ void SocketManager::addJob(const deadline_timer::duration_type& duration, const 
 }
 
 SocketManager::Callback SocketManager::addTimedJob(const deadline_timer::duration_type& duration, const Callback& callback) {
-	timer_ptr timer = make_shared<timer_ptr::element_type>(io, duration);
-	Callback* pCallback = new Callback(callback); // create a separate callback on the heap to avoid shutdown crashes
+	auto timer = make_shared<timer_ptr::element_type>(io, duration);
+	auto pCallback = new Callback(callback); // create a separate callback on the heap to avoid shutdown crashes
 	setTimer(timer, duration, pCallback);
 	return std::bind(&SocketManager::cancelTimer, this, timer, pCallback);
 }

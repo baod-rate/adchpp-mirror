@@ -1,4 +1,6 @@
 -- 3.0.0 2021-xx-xx --
+* Make some TLS connection parameters configurable (cologic, emtee)
+* Require TLS 1.2 or newer (currently only TLS 1.3)-based ADCS connections by default (cologic)
 * [L#1088638] Add parameter to control the size of usercount allowed to have overflowing buffers (emtee)
 * Fix certificate generation on Windows (emtee)
 * Increase the default DH key value to 2048 in response to https://weakdh.org (thanks kcchouette)

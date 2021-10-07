@@ -19,6 +19,15 @@
 #ifndef ADCHPP_SERVER_INFO_H
 #define ADCHPP_SERVER_INFO_H
 
+// TLS minimum protocol version constants from OpenSSL:
+// https://github.com/openssl/openssl/blob/openssl-3.0.0/include/openssl/prov_ssl.h#L23-L26
+// https://www.openssl.org/docs/man1.1.1/man3/SSL_CTX_set_min_proto_version.html
+
+#define TLS1_VERSION	0x0301
+#define TLS1_1_VERSION	0x0302
+#define TLS1_2_VERSION	0x0303
+#define TLS1_3_VERSION	0x0304
+
 namespace adchpp {
 
 struct ServerInfo {
@@ -31,6 +40,9 @@ struct ServerInfo {
 		std::string trustedPath;
 		std::string dh;
 
+		std::string cipherSuites13;
+		int minVersion = TLS1_2_VERSION; // TLS 1.2+ by default
+		int securityLevel = 1; // minimum of 80 bits of security
 	private:
 		friend struct ServerInfo;
 		bool secure() const {

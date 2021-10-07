@@ -72,6 +72,29 @@ When DC clients that support keyprint (most which supports the latest version of
 The only caveat of using keyprint is that it obviously needs to be recreated once your certificate becomes invalid. Since keyprint is part of the hub URL that clients may save as favorites, a certificate change may prevent some users connecting to the hub until they change or remove the old keyprint from the saved hub address.
 To avoid this you can generate a new certificate before you publish the keyprint that is valid for several years. The basic ADCS setup part of the Basic Guide describes how to change the validity time of the generated cerificate.
 
+=== Set TLS connection parameters to harden or ease the level of security
+
+Since version 3.0.0 ADCH++ requires TLS protocol version 1.2 or later by default for hub connections. The accepted TLS version and two other secure connection parameters can be altered so hub administrators can set up secure connectivity suitable for their needs.
+Ths can be done by adding extra parameters for each <Server> connection item in the <Servers> node of the adchpp.xml settings file.
+The following parameters are available:
+
+* MinVersion - specifies the minimum TLS protocol version required. Accepted values are 0...3 where 0 means TLS version 1.0 and later, 1 means TLS version 1.1 and later, 2 means TLS version 1.2 and later and 3 means TLS version 1.3, respectively. Default value is 2.
+* SecurityLevel - connection security level. Accepted values are level 0...5. For exact meaning of each level please refer to https://www.openssl.org/docs/man1.1.1/man3/SSL_CTX_get_security_level.html Default value is 1.
+* CipherSuite1_3 - A simple colon (":") separated list of TLSv1.3 ciphersuite names in order of preference. For avalilable ciphersuites and the default value please refer to https://www.openssl.org/docs/man1.1.1/man3/SSL_CTX_set_ciphersuites.html
+
+.Example: Server with altered TLS connection parameters
+--------------------------------------
+[source,xml]
+	<Servers>
+		<Server Port="2780" TLS="1" Certificate="certs/cacert.pem" PrivateKey="certs/privkey.pem" 
+		TrustedPath="certs/trusted/" DHParams="certs/dhparam.pem"/ MinVersion="3" SecurityLevel="2" 
+		CipherSuites1_3="ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384">
+	</Servers>
+--------------------------------------
+You have to restart the hub for these changes to take effect.
+
+IMPORTANT: Be careful with these settings as invalid values can render your hub unconnectable.
+
 === Monitor and control user behavior with guard functions
 
 This part shows how to achieve spam, badword or badsearch protection as well as how to protect the hub's normal operation from malicious or accidental flooding or misuse.

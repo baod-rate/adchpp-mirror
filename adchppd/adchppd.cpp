@@ -34,6 +34,8 @@
 using namespace adchpp;
 using namespace std;
 
+const uint16_t protoVersions[] = {TLS1_VERSION, TLS1_1_VERSION, TLS1_2_VERSION, TLS1_3_VERSION};
+
 void loadXML(Core &core, const string& aFileName)
 {
 	try {
@@ -84,7 +86,7 @@ void loadXML(Core &core, const string& aFileName)
 				ServerInfoList servers;
 
 				while(xml.findChild("Server")) {
-					ServerInfoPtr server = make_shared<ServerInfo>();
+					auto server = make_shared<ServerInfo>();
 					server->port = xml.getChildAttrib("Port", Util::emptyString);
 
 					if(xml.getBoolChildAttrib("TLS")) {
@@ -92,6 +94,13 @@ void loadXML(Core &core, const string& aFileName)
 						server->TLSParams.pkey = File::makeAbsolutePath(xml.getChildAttrib("PrivateKey"));
 						server->TLSParams.trustedPath = File::makeAbsolutePath(xml.getChildAttrib("TrustedPath"));
 						server->TLSParams.dh = File::makeAbsolutePath(xml.getChildAttrib("DHParams"));
+						server->TLSParams.cipherSuites13 = xml.getChildAttrib("CipherSuites1_3");
+						if (xml.getChildAttrib("MinVersion") != Util::emptyString) {
+							server->TLSParams.minVersion = getProtoVersion(xml.getIntChildAttrib("MinVersion")); 
+						}
+						if (xml.getChildAttrib("SecurityLevel") != Util::emptyString) {
+							server->TLSParams.securityLevel = xml.getIntChildAttrib("SecurityLevel");
+						}
 					}
 
 #ifndef HAVE_OPENSSL
@@ -122,4 +131,9 @@ void loadXML(Core &core, const string& aFileName)
 	} catch(const Exception& e) {
 		printf("Unable to load adchpp.xml, using defaults: %s\n", e.getError().c_str());
 	}
+}
+
+uint16_t getProtoVersion(uint8_t setting)
+{
+	return setting < sizeof(protoVersions) ? protoVersions[setting] : TLS1_2_VERSION;
 }
