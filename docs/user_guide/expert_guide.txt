@@ -88,7 +88,7 @@ The following parameters are available:
 	<Servers>
 		<Server Port="2780" TLS="1" Certificate="certs/cacert.pem" PrivateKey="certs/privkey.pem" 
 		TrustedPath="certs/trusted/" DHParams="certs/dhparam.pem"/ MinVersion="3" SecurityLevel="2" 
-		CipherSuites1_3="ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384">
+		CipherSuites1_3="TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256">
 	</Servers>
 --------------------------------------
 You have to restart the hub for these changes to take effect.
@@ -732,6 +732,7 @@ Changelog:
 0.4.4: Update build tools (poy)
 0.4.5: Update supported OSes; httpsify feasible links; fix broken links; change links from BZR to the Mercurial repository (emtee)
 0.4.6: Httpsify feasible links (emtee)
-0.4.7: Add info about scaling hub resource usage with low level connectivity settings; Add info about keyprint generation; (emtee)
+0.4.7: Add info about scaling hub resource usage with low level connectivity settings; Add info about keyprint generation;
+       Describe the advanced TLS connectivity parameters (emtee)
 ////////////////////////////////////////////////////////////////
 // vim: set syntax=asciidoc:
