@@ -1,6 +1,6 @@
 = ADCH++  Expert User Guide
 Created by the DC++ team
-Document Version 0.4.7
+Document Version 0.4.8
 :toc:
 This version of the guide corresponds with ADCH++ versions *3.0.0* and later.
 
@@ -38,8 +38,11 @@ CAUTION: Editing the values incorrectly can lead to problems so be careful what 
 Connection to hubs can be unsafe in many ways and hardening the security as much as possible without sacrificing usability is always an advantage. The most common way of attack is, for example, to take the ownership of the hub address domain and divert the connected clients elsewhere.
 Keyprint adds a simple, but secure, way to protect against man-in-the-middle attacks, ensures that clients are always connecting to the hub they desire and not to some other maliciously set up DC hub. It is also an easier-to-use replacement of trusted certificates.
 
-The keyprint itself is a BASE32 encoded value of the SHA256 hash of the server certificate file cacert.pem. 
-You need a hash generator tool to get the hash of the cert file. There are plenty out there and some may even come with your operating system. The OpenSSL binary is also capable of producing the hash value by using the command
+Publishing your hub's address with keyprint included is therefore allows the users to connect to the hub more securely. The keyprint itself is a BASE32 encoded value of the SHA256 hash of the server certificate file cacert.pem. You can get your hub's keyprint value in the following ways:
+
+Keyprint is sent to every capable DC client when they're connecting to an ADCH\++ hub. Once connected, some of the DC clients are capable to produce the complete hub address, with the keyprint value added, usually by an item in the context menu of the hub tab (this can vary client by client). This way the owner or even any user of a secure ADCH++ hub can easily get and use a keyprint-included hub address to connect to the hub more securely.
+
+Even if your DC client is unable to show keyprints, you can determine the hub's keyprint value yourself. You need a hash generator tool to get the SHA256 hash of the certification file (cacert.pem). There are plenty out there and some may even come with your operating system. The OpenSSL binary is also capable of producing this hash value by using the command
 
 .Example: Getting the hash of the cert file using OpenSSL
 --------------------------------------
@@ -69,8 +72,8 @@ adcs://example.com:1234/?kp=SHA256/E2TKG342HSQ3VB7J6I27ULFTNVVSRSEKEJMOLHIERZWB5
 
 When DC clients that support keyprint (most which supports the latest version of the ADC protocol should do) trying to connect to your hub using an address with the keyprint parameter specified, they will now compare the hash value what your hub sends to the public keyprint and refuse to connect if they mismatch.
 
-The only caveat of using keyprint is that it obviously needs to be recreated once your certificate becomes invalid. Since keyprint is part of the hub URL that clients may save as favorites, a certificate change may prevent some users connecting to the hub until they change or remove the old keyprint from the saved hub address.
-To avoid this you can generate a new certificate before you publish the keyprint that is valid for several years. The basic ADCS setup part of the Basic Guide describes how to change the validity time of the generated cerificate.
+The only caveat of using hub addresses with keyprint is that it obviously needs to be recreated once your certificate changes or becomes invalid. Since keyprint is part of the hub URL that clients may save as favorites, a certificate change may prevent some users connecting to the hub until they also change or remove the old keyprint from the saved hub address.
+To avoid this you can generate a new certificate that is valid for several years before you publish your hub address with a keyprint included. The basic ADCS setup part of the Basic Guide describes how to change the validity time of the generated cerificate.
 
 === Set TLS connection parameters to harden or ease the level of security
 
@@ -734,5 +737,6 @@ Changelog:
 0.4.6: Httpsify feasible links (emtee)
 0.4.7: Add info about scaling hub resource usage with low level connectivity settings; Add info about keyprint generation;
        Describe the advanced TLS connectivity parameters (emtee)
+0.4.8: Describe an optional, easier method to get the hub's keyprint (emtee)
 ////////////////////////////////////////////////////////////////
 // vim: set syntax=asciidoc:
