@@ -220,8 +220,6 @@ env.Append(UNDEF = '-Wl,--no-undefined')
 if dev.is_win32():
 	env.Append(LIBS = ['ws2_32', 'mswsock'])
 
-env.SourceCode('.', None)
-
 import SCons.Scanner
 SWIGScanner = SCons.Scanner.ClassicCPP(
 	"SWIGScan",
