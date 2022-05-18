@@ -89,8 +89,8 @@
 		CipherSuite1_3, List of TLSv1.3 ciphersuite names in order of preference. More information : https://www.openssl.org/docs/man1.1.1/man3/SSL_CTX_set_ciphersuites.html
 
 		An example of secure server with non-default TLS connection parameters:
-		<Server Port="2780" TLS="1" Certificate="certs/cacert.pem" PrivateKey="certs/privkey.pem" TrustedPath="certs/trusted/" DHParams="certs/dhparam.pem"/ MinVersion="3" SecurityLevel="2" 
-		CipherSuites1_3="TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256">
+		<Server Port="2780" TLS="1" Certificate="certs/cacert.pem" PrivateKey="certs/privkey.pem" TrustedPath="certs/trusted/" DHParams="certs/dhparam.pem" MinVersion="3" SecurityLevel="2" 
+		CipherSuites1_3="TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256"/>
 		-->
 		<Server Port="2780"/>
 	</Servers>

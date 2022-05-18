@@ -1,3 +1,7 @@
+-- 3.0.1 2022-xx-xx --
+* [l#1956253] Improve certificate generation on Windows
+* Windows release compiled with OpenSSL 1.1.1n
+
 -- 3.0.0 2021-10-08 --
 * Make some TLS connection parameters configurable (cologic, emtee)
 * Require TLS 1.2 or newer (currently only TLS 1.3)-based ADCS connections by default (cologic)

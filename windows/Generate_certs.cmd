@@ -18,6 +18,11 @@ if not exist %SSL% (
 )
 
 if not exist %SSL% (
+   echo OpenSSL isn't found in %SSL%
+   set SSL="%PROGRAMFILES%\OpenSSL-Win64\bin\openssl.exe"
+)
+
+if not exist %SSL% (
    echo.
    echo OpenSSL isn't found in %SSL%, exiting...
    pause
