@@ -19,12 +19,12 @@ BEGIN
         BEGIN
             VALUE "Comments", "https://adchpp.sourceforge.io"
             VALUE "FileDescription", "ADCH++"
-            VALUE "FileVersion", "3, 0, 0, 0"
+            VALUE "FileVersion", "3, 0, 0, 1"
             VALUE "InternalName", "ADCH++"
             VALUE "LegalCopyright", "Copyright 2006-2022 Jacek Sieka"
             VALUE "OriginalFilename", "adchppd.exe"
             VALUE "ProductName", "ADCH++"
-            VALUE "ProductVersion", "3, 0, 0, 0"
+            VALUE "ProductVersion", "3, 0, 1, 0"
         END
     END
     BLOCK "VarFileInfo"
